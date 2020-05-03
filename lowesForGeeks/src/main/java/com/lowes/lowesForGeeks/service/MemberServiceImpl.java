@@ -49,24 +49,34 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(number);
     }
 
-
     @Override
-    public ResponseEntity changeFirstName(Member user, Member toBeUpdated, String firstName) {
-        if(user.isOrganizationAdmin() || (user.isTeamAdmin() && user.getTeamId() == toBeUpdated.getTeamId())
-                || user.getId()==toBeUpdated.getId() )
-        {
-            toBeUpdated.setFirstName(firstName);
-            return new ResponseEntity(memberRepository.save(toBeUpdated), OK);
+    public ResponseEntity<Member> update(Member loggedInMember, Member toBeUpdated, Member member) {
+        if(loggedInMember.isOrganizationAdmin() || (loggedInMember.isTeamAdmin() && loggedInMember.getTeamId()
+                == toBeUpdated.getTeamId()) || loggedInMember.getId()==toBeUpdated.getId() ){
+            return new ResponseEntity(memberRepository.save(member), OK);
         }
-        else
+        else{
             throw new ValidationException("Not Authorized");
+        }
     }
 
     @Override
-    public ResponseEntity changeLastName(Member user, Member toBeUpdated, String lastName) {
-        if(user.isOrganizationAdmin() || (user.isTeamAdmin() && user.getTeamId() == toBeUpdated.getTeamId())
-                || user.getId()==toBeUpdated.getId() )
-        {
+    public ResponseEntity changeFirstName(Member loggedInMember, Member toBeUpdated, String firstName) {
+        if(loggedInMember.isOrganizationAdmin() || (loggedInMember.isTeamAdmin() && loggedInMember.getTeamId()
+                == toBeUpdated.getTeamId())
+                || loggedInMember.getId()==toBeUpdated.getId() ){
+            toBeUpdated.setFirstName(firstName);
+            return new ResponseEntity(memberRepository.save(toBeUpdated), OK);
+        }
+        else {
+            throw new ValidationException("Not Authorized");
+        }
+    }
+
+    @Override
+    public ResponseEntity changeLastName(Member loggedInMember, Member toBeUpdated, String lastName) {
+        if(loggedInMember.isOrganizationAdmin() || (loggedInMember.isTeamAdmin() && loggedInMember.getTeamId()
+                == toBeUpdated.getTeamId()) || loggedInMember.getId()==toBeUpdated.getId() ){
             toBeUpdated.setLastName(lastName);
             return new ResponseEntity(memberRepository.save(toBeUpdated), OK);
         }
@@ -75,10 +85,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ResponseEntity changeEmail(Member user, Member toBeUpdated, String email) {
-        if(user.isOrganizationAdmin() || (user.isTeamAdmin() && user.getTeamId() == toBeUpdated.getTeamId())
-                || user.getId()==toBeUpdated.getId() )
-        {
+    public ResponseEntity changeEmail(Member loggedInMember, Member toBeUpdated, String email) {
+        if(loggedInMember.isOrganizationAdmin() || (loggedInMember.isTeamAdmin() && loggedInMember.getTeamId()
+                == toBeUpdated.getTeamId()) || loggedInMember.getId()==toBeUpdated.getId() ){
             toBeUpdated.setEmail(email);
             return new ResponseEntity(memberRepository.save(toBeUpdated), OK);
         }
@@ -157,5 +166,5 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.delete(member);
         return new ResponseEntity("Delete Successful", OK);
     }
-    
+
 }

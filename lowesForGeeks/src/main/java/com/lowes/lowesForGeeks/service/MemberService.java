@@ -23,11 +23,13 @@ public interface MemberService {
 
     ResponseEntity<Member> delete(Member member);
 
-    ResponseEntity<Member> changeFirstName(Member user, Member toBeUpdated, String firstName);
+    ResponseEntity<Member> update(Member loggedInMember, Member toBeUpdated, Member member);
 
-    ResponseEntity<Member> changeLastName(Member user, Member toBeUpdated, String lastName);
+    ResponseEntity<Member> changeFirstName(Member loggedInMember, Member toBeUpdated, String firstName);
 
-    ResponseEntity<Member> changeEmail(Member user, Member toBeUpdated, String email);
+    ResponseEntity<Member> changeLastName(Member loggedInMember, Member toBeUpdated, String lastName);
+
+    ResponseEntity<Member> changeEmail(Member loggedInMember, Member toBeUpdated, String email);
 
     ResponseEntity<Member> makeTeamAdmin(Member toBeAdmin, Member member);
 

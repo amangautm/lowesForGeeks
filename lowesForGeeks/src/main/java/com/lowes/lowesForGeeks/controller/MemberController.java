@@ -30,77 +30,167 @@ public class MemberController {
     public void setTeamService(TeamService teamService){ this.teamService = teamService; }
 
     @GetMapping("/lowesforgeeks/member")
-    Iterable<Member> read()
-    {
+    Iterable<Member> read(){
         return memberService.findAll();
     }
 
-    @PostMapping("/lowesforgeeks/member")
-    ResponseEntity<Member> create(
-            @RequestHeader( name="loggedInMemberId") Integer id,
-            @Nullable @RequestHeader(name = "teamId") Integer teamId, @Valid  @RequestBody Member member){
-        Member adder = memberService.findById(id).get();
-        return memberService.create(member,adder,teamService.findByTeamId(teamId).get());
-    }
-
-    @PutMapping("/lowesforgeeks/member/update/{firstName}")
-    ResponseEntity<Member> changeFirstName(
-            @RequestHeader(name = "loggedInMemberId") Integer id,
-            @RequestHeader(name = "memberId") Integer memberId,@PathVariable String firstName) {
-        Optional<Member> member = memberService.findById(memberId);
-        if(member.isPresent()) {
-            return memberService.changeFirstName(memberService.findById(id).get(),member.get(), firstName);
-        }
-        else {
-            throw new NoSuchElementException("Member not found");
-        }
-    }
-
-    @PutMapping("lowesforgeeks/member/update/{lastName}")
-    ResponseEntity<Member> changeLastName(
-            @RequestHeader(name = "loggedInMemberId") Integer id,
-            @RequestHeader(name = "memberId") Integer memberId,@PathVariable String lastName) {
-        Optional<Member> member = memberService.findById(memberId);
-        if(member.isPresent())
-            return memberService.changeLastName(memberService.findById(id).get(), member.get(),lastName);
-        else
-            throw new NoSuchElementException("Member not found");
-    }
-
-    @PutMapping("lowesforgeeks/member/update/{email}")
-    ResponseEntity<Member> changeEmail(
-            @RequestHeader(name = "loggedInMemberId") Integer id,
-            @RequestHeader(name = "memberId") Integer memberId,@PathVariable String email) {
-        Optional<Member> member = memberService.findById(memberId);
-        if(member.isPresent())
-            return memberService.changeEmail(memberService.findById(id).get(), member.get(),email);
-        else
-            throw new NoSuchElementException("Member not found");
-    }
-
     @GetMapping("/lowesforgeeks/member/{id}")
-    Optional<Member> findById(@PathVariable Integer id)
-    {
-        return memberService.findById(id);
+    Optional<Member> findById(@PathVariable Integer id){
+        if(memberService.findById(id).isPresent()) {
+            return memberService.findById(id);
+        }
+        else{
+            throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+        }
     }
 
     @GetMapping("/lowesforgeeks/member/search")
     Iterable<Member> findByName(
             @RequestParam(value = "first", required = false) String firstName,
             @RequestParam(value = "last", required = false) String lastName) {
-        if(firstName!=null&&lastName!=null)
+        if(firstName!=null&&lastName!=null) {
             return memberService.findByFirstNameAndLastName(firstName, lastName);
-        else if(firstName!=null)
+        }
+        else if(firstName!=null) {
             return memberService.findByFirstName(firstName);
-        else if(lastName!=null)
+        }
+        else if(lastName!=null) {
             return memberService.findByLastName(lastName);
-        else
-            return null;
+        }
+        else {
+            throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+        }
     }
 
-    @DeleteMapping("lowesforgeeks/member")
-    ResponseEntity delete(@RequestHeader(name = "loggedInMemberId") Integer id)
-    {
-        return memberService.delete(memberService.findById(id).get());
+    @PostMapping("/lowesforgeeks/member")
+    ResponseEntity<Member> create(
+            @RequestHeader( name="loggedInMemberId") Integer id,
+            @RequestHeader(name = "teamId") Integer teamId,
+            @Valid  @RequestBody Member newMember){
+        if (memberService.findById(id).isPresent()) {
+            Member existingMember = memberService.findById(id).get();
+            if (existingMember.getTeamId() != teamId) {
+                throw new NoSuchElementException("Enter correct team id of logged in member");
+            }
+            else {
+                return memberService.create(newMember, existingMember, teamService.findByTeamId(teamId).get());
+            }
+        }
+        else{
+            throw new NoSuchElementException("Enter correct id of logged in member");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/update")
+    ResponseEntity<Member> update(
+            @RequestHeader( name="loggedInMemberId") Integer id,
+            @RequestHeader(name = "toBeUpdatedMemberId") Integer toBeUpdatedId,
+            @Valid  @RequestBody Member member){
+        if(memberService.findById(id).isPresent()) {
+            Member loggedInMember =memberService.findById(id).get();
+            if(memberService.findById(toBeUpdatedId).isPresent()) {
+                Member toBeUpdatedMember =memberService.findById(toBeUpdatedId).get();
+                return memberService.update(loggedInMember,toBeUpdatedMember,member);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else {
+            throw new NoSuchElementException("Enter correct id of logged in member");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/updateFirstName/{firstName}")
+    ResponseEntity<Member> changeFirstName(
+            @RequestHeader(name = "loggedInMemberId") Integer id,
+            @RequestHeader(name = "toBeUpdatedMemberId") Integer toBeUpdatedId,
+            @PathVariable String firstName) {
+        if(memberService.findById(id).isPresent()) {
+            Member loggedInMember =memberService.findById(id).get();
+            if(memberService.findById(toBeUpdatedId).isPresent()) {
+                Member toBeUpdatedMember =memberService.findById(toBeUpdatedId).get();
+                return memberService.changeFirstName(loggedInMember, toBeUpdatedMember , firstName);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else {
+            throw new NoSuchElementException("Enter correct id of logged in member");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/updateLastName/{lastName}")
+    ResponseEntity<Member> changeLastName(
+            @RequestHeader(name = "loggedInMemberId") Integer id,
+            @RequestHeader(name = "toBeUpdatedMemberId") Integer toBeUpdatedId,
+            @PathVariable String lastName) {
+        if(memberService.findById(id).isPresent()) {
+            Member loggedInMember =memberService.findById(id).get();
+            if(memberService.findById(toBeUpdatedId).isPresent()) {
+                Member toBeUpdatedMember =memberService.findById(toBeUpdatedId).get();
+                return memberService.changeLastName(loggedInMember, toBeUpdatedMember , lastName);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else {
+            throw new NoSuchElementException("Enter correct id of logged in member");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/updateEmail/{email}")
+    ResponseEntity<Member> changeEmail(
+            @RequestHeader(name = "loggedInMemberId") Integer id,
+            @RequestHeader(name = "toBeUpdatedMemberId") Integer toBeUpdatedId,
+            @PathVariable String email) {
+        if(memberService.findById(id).isPresent()) {
+            Member loggedInMember =memberService.findById(id).get();
+            if(memberService.findById(toBeUpdatedId).isPresent()) {
+                Member toBeUpdatedMember =memberService.findById(toBeUpdatedId).get();
+                return memberService.changeEmail(loggedInMember, toBeUpdatedMember , email);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else {
+            throw new NoSuchElementException("Enter correct id of logged in member");
+        }
+    }
+
+    @DeleteMapping("/lowesforgeeks/member/{toBeDeletedId}")
+    ResponseEntity delete(
+            @RequestHeader(name="loggedInMemberId") Integer id,
+            @RequestHeader(name = "teamId") Integer teamId,
+            @PathVariable Integer toBeDeletedId) {
+        if (memberService.findById(id).isPresent()) {
+            Member loggedInMember = memberService.findById(id).get();
+            if (loggedInMember.getTeamId() != teamId) {
+                throw new NoSuchElementException("Enter correct team id of logged in member");
+            }
+            if (memberService.findById(toBeDeletedId).isPresent()) {
+                Member toBeDeletedMember = memberService.findById(toBeDeletedId).get();
+                if (loggedInMember.isOrganizationAdmin()) {
+                    return memberService.delete(toBeDeletedMember);
+                } else if (loggedInMember.isTeamAdmin()) {
+                    if (loggedInMember.getTeamId() == toBeDeletedMember.getTeamId()) {
+                        return memberService.delete(toBeDeletedMember);
+                    } else {
+                        throw new NoSuchElementException("As a Team Admin not have access to delete member from other team");
+                    }
+                } else {
+                    throw new NoSuchElementException("As a Normal member not have access to delete any member");
+                }
+            }
+         else {
+            throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+        }
+    }
+         else{
+             throw new NoSuchElementException("Enter correct member id");
+         }
     }
 }

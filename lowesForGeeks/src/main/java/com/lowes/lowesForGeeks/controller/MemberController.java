@@ -193,4 +193,80 @@ public class MemberController {
              throw new NoSuchElementException("Enter correct member id");
          }
     }
+
+    @PutMapping("/lowesforgeeks/member/makeOrganizationAdmin/{toBeAdminId}")
+    ResponseEntity<Member> makeOrganizationAdmin(
+            @RequestHeader(name ="loggedInMemberId") Integer id,
+            @PathVariable Integer toBeAdminId){
+        if (memberService.findById(id).isPresent()) {
+            Member loggedInMember = memberService.findById(id).get();
+            if (memberService.findById(toBeAdminId).isPresent()) {
+                Member toBeAdminMember = memberService.findById(toBeAdminId).get();
+                return new ResponseEntity(memberService.makeOrganizationAdmin(toBeAdminMember,loggedInMember),HttpStatus.OK);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else{
+            throw new NoSuchElementException("Enter correct member id");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/removeOrganizationAdmin/{toNotBeAdminId}")
+    ResponseEntity<Member> removeOrganizationAdmin(
+            @RequestHeader(name ="loggedInMemberId") Integer id,
+            @PathVariable Integer toNotBeAdminId){
+        if (memberService.findById(id).isPresent()) {
+            Member loggedInMember = memberService.findById(id).get();
+            if (memberService.findById(toNotBeAdminId).isPresent()) {
+                Member toNotBeAdminMember = memberService.findById(toNotBeAdminId).get();
+                return new ResponseEntity(memberService.removeOrganizationAdmin(toNotBeAdminMember,loggedInMember),HttpStatus.OK);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else{
+            throw new NoSuchElementException("Enter correct member id");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/makeTeamAdmin/{toBeAdminId}")
+    ResponseEntity<Member> makeTeamAdmin(
+            @RequestHeader(name ="loggedInMemberId") Integer id,
+            @PathVariable Integer toBeAdminId){
+        if (memberService.findById(id).isPresent()) {
+            Member loggedInMember = memberService.findById(id).get();
+            if (memberService.findById(toBeAdminId).isPresent()) {
+                Member toBeAdminMember = memberService.findById(toBeAdminId).get();
+                return new ResponseEntity(memberService.makeTeamAdmin(toBeAdminMember,loggedInMember),HttpStatus.OK);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else{
+            throw new NoSuchElementException("Enter correct member id");
+        }
+    }
+
+    @PutMapping("/lowesforgeeks/member/removeTeamAdmin/{toNotBeAdminId}")
+    ResponseEntity<Member> removeTeamAdmin(
+            @RequestHeader(name ="loggedInMemberId") Integer id,
+            @PathVariable Integer toNotBeAdminId){
+        if (memberService.findById(id).isPresent()) {
+            Member loggedInMember = memberService.findById(id).get();
+            if (memberService.findById(toNotBeAdminId).isPresent()) {
+                Member toNotBeAdminMember = memberService.findById(toNotBeAdminId).get();
+                return new ResponseEntity(memberService.removeTeamAdmin(toNotBeAdminMember,loggedInMember),HttpStatus.OK);
+            }
+            else{
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
+        }
+        else{
+            throw new NoSuchElementException("Enter correct member id");
+        }
+    }
 }

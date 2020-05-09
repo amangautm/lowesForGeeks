@@ -65,16 +65,12 @@ public class MemberController {
     @PostMapping("/lowesforgeeks/member")
     ResponseEntity<Member> create(
             @RequestHeader( name="loggedInMemberId") Integer id,
-            @RequestHeader(name = "teamId") Integer teamId,
+            @RequestHeader(name = "teamId") Integer newMemberTeamId,     //team in which you want to add this member
+            @Nullable @RequestHeader(name = "orgId") Integer newMemberOrgId,
             @Valid  @RequestBody Member newMember){
         if (memberService.findById(id).isPresent()) {
             Member existingMember = memberService.findById(id).get();
-            if (existingMember.getTeamId() != teamId) {
-                throw new NoSuchElementException("Enter correct team id of logged in member");
-            }
-            else {
-                return memberService.create(newMember, existingMember, teamService.findByTeamId(teamId).get());
-            }
+            return memberService.create(newMember,existingMember, newMemberTeamId, newMemberOrgId);
         }
         else{
             throw new NoSuchElementException("Enter correct id of logged in member");

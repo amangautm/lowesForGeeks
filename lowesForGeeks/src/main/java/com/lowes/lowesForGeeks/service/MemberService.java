@@ -19,7 +19,7 @@ public interface MemberService {
 
     Optional<Member> findById(Integer number);
 
-    ResponseEntity<Member> create(Member member, Member adder, Team team);
+    ResponseEntity<Member> create(Member member, Member creator, Integer newMemberTeamId, Integer newMemberOrgId);
 
     ResponseEntity<Member> delete(Member member);
 

@@ -7,17 +7,17 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 public interface TeamService {
-    ResponseEntity<Team> create(Team team, Member creator);
+    ResponseEntity<Team> create(Team team, Member member,Member creator);
 
-    ResponseEntity<Team> updateName(Team team, String name,Member updater);
+    ResponseEntity<Team> update(Team team,Member creator);
 
-    ResponseEntity<Team> addMemberExist(Team team, Member toBeAdded, Member updater );
+    ResponseEntity<Team> updateName(Team team, String name,Member creator);
 
-    ResponseEntity<Team> addMemberNew(Team team, Member toBeAdded, Member updater);
+    ResponseEntity<Team> addMember(Team team, Member toBeAdded, Member creator );
 
-    ResponseEntity<Team> removeMember(Team team, Member toBeRemoved, Member updater);
+    ResponseEntity<Team> removeMember(Team team, Member toBeRemoved, Member remover);
 
-    ResponseEntity<Team> addTeamAdmin(Team team, Member admin, Member updater);
+    ResponseEntity<Team> addTeamAdmin(Team team, Member admin, Member creator);
 
     ResponseEntity<Team> removeTeamAdmin(Team team , Member admin, Member updater);
 

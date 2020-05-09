@@ -3,12 +3,14 @@ package com.lowes.lowesForGeeks.service;
 import com.lowes.lowesForGeeks.model.Member;
 import com.lowes.lowesForGeeks.model.Team;
 import com.lowes.lowesForGeeks.repository.MemberRepository;
+import com.lowes.lowesForGeeks.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -23,6 +25,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    private String mssg ="Only Organization and Team Admin is authorized to do so.";
 
     @Override
     public Iterable<Member> findByFirstNameAndLastName(String firstName, String lastName) {
@@ -95,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
             throw new ValidationException("Not Authorized");
     }
     
-    private boolean hasAccess(Member member, Team team) {
+    static boolean hasAccess(Member member, Team team) {
         if (member.isOrganizationAdmin() || (member.isTeamAdmin()) && (member.getTeamId() == team.getTeamId())){
             return true;
     }
@@ -106,14 +113,16 @@ public class MemberServiceImpl implements MemberService {
     
     @Override
     public ResponseEntity makeTeamAdmin(Member toBeAdmin, Member member) {
-        if(toBeAdmin.getTeamId()==null) {
+        if(toBeAdmin.getTeamId() ==null) {
             throw new ValidationException("Member has to be a team member first");
         }
-        if(!hasAccess(member,teamService.findByTeamId(toBeAdmin.getTeamId()).get())) {
-            return new ResponseEntity("NOT AUTHORIZED", BAD_REQUEST);
+        if(hasAccess(member,teamService.findByTeamId(toBeAdmin.getTeamId()).get())) {
+            toBeAdmin.setTeamAdmin(true);
+            return new ResponseEntity(memberRepository.save(toBeAdmin), OK);
         }
-        toBeAdmin.setTeamAdmin(true);
-        return new ResponseEntity(memberRepository.save(toBeAdmin), OK);
+        else{
+            return new ResponseEntity("Only Organization Admin and Team Admin of same Team is Authorized", BAD_REQUEST);
+        }
     }
 
     @Override
@@ -122,44 +131,63 @@ public class MemberServiceImpl implements MemberService {
               toBeNotAdmin.setTeamAdmin(false);
              return new ResponseEntity(memberRepository.save(toBeNotAdmin), OK);
         }
-        throw new ValidationException("NOT AUTHORIZED");
+        else {
+            return new ResponseEntity("Only Organization and Team Admin of same Team is Authorized", BAD_REQUEST);
+        }
     }
 
     @Override
-    public ResponseEntity makeOrganizationAdmin(Member toBeAdmin, Member member) {
-        if(member.isOrganizationAdmin()){
+    public ResponseEntity makeOrganizationAdmin(Member toBeAdmin, Member creator) {
+        if(creator.isOrganizationAdmin()){
             toBeAdmin.setOrganizationAdmin(true);
             return new ResponseEntity(memberRepository.save(toBeAdmin), OK);
         }
         else {
-            throw new ValidationException("NOT AUTHORIZED");
+            return new ResponseEntity("Only Organization Admin is Authorized", BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity removeOrganizationAdmin(Member toBeNotAdmin, Member member) {
-        if(member.isOrganizationAdmin()){
+    public ResponseEntity removeOrganizationAdmin(Member toBeNotAdmin, Member creator) {
+        if(creator.isOrganizationAdmin()){
             toBeNotAdmin.setOrganizationAdmin(false);
             return new ResponseEntity(memberRepository.save(toBeNotAdmin), OK);
         }
         else {
-            throw new ValidationException("NOT AUTHORIZED");
+            return new ResponseEntity("Only Organization Admin is Authorized", BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity create(Member member, Member adder, Team team) {
-        if(team!=null) {
-            if (!hasAccess(adder, team))
-                throw new ValidationException("Member can be added only by team admins and organizations admins.");
-            Integer teamId = team.getTeamId();
-            member.setTeamId(teamId);
+    public ResponseEntity<Member> create(Member newMember, Member creator, Integer newMemberTeamId, Integer newMemberOrgId) {
+        if(creator.isOrganizationAdmin() || creator.isTeamAdmin()&& creator.getTeamId() ==newMemberTeamId) {
+            if (newMemberOrgId == null) {
+                if (teamService.findByTeamId(newMemberTeamId).isPresent()) {
+                    newMember.setTeamId(newMemberTeamId);
+                    newMember.setOrganizationId(creator.getOrganizationId());
+                    return new ResponseEntity<>(memberRepository.save(newMember), OK);
+                } else {
+                    throw new NoSuchElementException("Such team doesn't exist in DataBase");
+                }
+            } else {
+                if (organizationRepository.findById(newMemberOrgId).isPresent()) {
+                    if (teamService.findByTeamId(newMemberTeamId).isPresent()) {
+                        newMember.setTeamId(newMemberTeamId);
+                        newMember.setOrganizationId(newMemberOrgId);
+                        return new ResponseEntity<>(memberRepository.save(newMember), OK);
+                    } else {
+                        throw new NoSuchElementException("Such team doesn't exist in DataBase");
+                    }
+                } else {
+                    throw new NoSuchElementException("Such organisation doesn't exist in DataBase");
+                }
+            }
         }
-        Integer organizationId = adder.getOrganizationId();
-        member.setOrganizationId(organizationId);
-        return new ResponseEntity(memberRepository.save(member), OK);
-
+        else{
+            throw new ValidationException("Not Authorized");
+        }
     }
+
 
     @Override
     public ResponseEntity delete(Member member) {

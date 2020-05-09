@@ -21,11 +21,15 @@ public class TeamServiceImpl implements TeamService{
     @Autowired
     private MemberService memberService;
 
-    @Override
-    public ResponseEntity create(Team team, Member member) {
+    private String mssg ="Only Organization and Team Admin is authorized to do so.";
 
-        if(!member.isOrganizationAdmin()) {
+    @Override
+    public ResponseEntity create(Team team, Member member, Member creator) {
+        if(!creator.isOrganizationAdmin()) {
             throw new ValidationException("Member is not an Organization admin,can't create a new Team.");
+        }
+        if(!member.isOrganizationAdmin()) {
+            member.setTeamId(team.getTeamId());
         }
         List<Member> memberList = team.getMemberList();
         memberList.add(member);
@@ -36,64 +40,72 @@ public class TeamServiceImpl implements TeamService{
     }
 
     @Override
-    public ResponseEntity updateName(Team team, String name, Member member) {
-
-        if(!isQualified(member,team)) {
-            throw new ValidationException("Not a team or organization admin");
+    public ResponseEntity<Team> update(Team team, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator,team)){
+            return new ResponseEntity<>(teamRepository.save(team),HttpStatus.OK);
         }
-        team.setTeamName(name);
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
+        else{
+            throw new ValidationException(mssg);
+        }
     }
 
     @Override
-    public ResponseEntity addMemberExist(Team team, Member memberNew, Member member) {
-
-        if(!isQualified(member, team)) {
-            throw new ValidationException("Not a team or organization admin");
+    public ResponseEntity updateName(Team team, String name, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator,team)) {
+            team.setTeamName(name);
+            return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
         }
-        if(memberNew.getTeamId() != null) {
-            throw  new ValidationException("Member already part of a team");
+        else{
+            throw new ValidationException(mssg);
         }
-        List<Member> memberList=team.getMemberList();
-        memberList.add(memberNew);
-        team.setMemberList(memberList);
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity addMemberNew(Team team, Member toBeAdded, Member updater) {
-        if (!isQualified(updater, team)){
-            throw new ValidationException("Not a team or organization admin");
+    public ResponseEntity addMember(Team team, Member toBeAdded, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator, team)) {
+            toBeAdded.setTeamId(team.getTeamId());
+            List<Member> memberList=team.getMemberList();
+            memberList.add(toBeAdded);
+            team.setMemberList(memberList);
+            return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
+        }
+        else{
+            throw new ValidationException(mssg);
+        }
     }
-        ResponseEntity temp=  memberService.create(toBeAdded, updater , team);   //temp
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
+
+
+    @Override
+    public ResponseEntity removeMember(Team team, Member toBeRemoved, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator, team)) {
+            toBeRemoved.setTeamId(null);
+            return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
+        }
+        else{
+            throw new ValidationException(mssg);
+        }
     }
 
     @Override
-    public ResponseEntity removeMember(Team team, Member toBeRemoved, Member updater) {
-        if(!isQualified(updater, team)) {
-            throw new ValidationException("Not a team or organization admin");
+    public ResponseEntity addTeamAdmin(Team team, Member admin, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator, team)) {
+            memberService.makeTeamAdmin(admin, creator);
+            return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
         }
-        ResponseEntity temp = memberService.delete(toBeRemoved);
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
+        else{
+            throw new ValidationException(mssg);
+        }
     }
 
     @Override
-    public ResponseEntity addTeamAdmin(Team team, Member admin, Member updater) {
-        if(!isQualified(updater, team)) {
-            throw new ValidationException("Not a team or organization admin");
+    public ResponseEntity removeTeamAdmin(Team team, Member admin, Member creator) {
+        if(MemberServiceImpl.hasAccess(creator, team)) {
+            memberService.removeTeamAdmin(admin, creator);
+            return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
         }
-        memberService.makeTeamAdmin(admin, updater);
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity removeTeamAdmin(Team team, Member admin, Member updater) {
-        if(!isQualified(updater, team)) {
-            throw new ValidationException("Not a team or organization admin");
+        else{
+            throw new ValidationException(mssg);
         }
-        memberService.removeTeamAdmin(admin, updater);
-        return new ResponseEntity(teamRepository.save(team), HttpStatus.OK);
     }
 
     @Override
@@ -103,7 +115,7 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     public Optional<Team> findByTeamId(Integer id) {
-        return teamRepository.findById(id);
+        return teamRepository.findByTeamId(id);
     }
 
     @Override
@@ -115,16 +127,5 @@ public class TeamServiceImpl implements TeamService{
     public ResponseEntity delete(Team team) {
         teamRepository.delete(team);
         return new ResponseEntity("Deleted", HttpStatus.OK);
-    }
-
-    private boolean isQualified(Member updater, Team team)
-    {
-        if((!updater.isTeamAdmin() && !updater.isOrganizationAdmin()) ||
-                (updater.isTeamAdmin() && !updater.isOrganizationAdmin() && updater.getTeamId()!=team.getTeamId())) {
-            return false;
-        }
-        else {
-            return true;
-        }
     }
 }

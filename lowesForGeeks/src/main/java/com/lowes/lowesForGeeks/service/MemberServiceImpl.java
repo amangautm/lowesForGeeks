@@ -166,10 +166,12 @@ public class MemberServiceImpl implements MemberService {
                     newMember.setTeamId(newMemberTeamId);
                     newMember.setOrganizationId(creator.getOrganizationId());
                     return new ResponseEntity<>(memberRepository.save(newMember), OK);
-                } else {
+                }
+                else {
                     throw new NoSuchElementException("Such team doesn't exist in DataBase");
                 }
-            } else {
+            }
+            else {
                 if (organizationRepository.findById(newMemberOrgId).isPresent()) {
                     if (teamService.findByTeamId(newMemberTeamId).isPresent()) {
                         newMember.setTeamId(newMemberTeamId);
@@ -178,7 +180,8 @@ public class MemberServiceImpl implements MemberService {
                     } else {
                         throw new NoSuchElementException("Such team doesn't exist in DataBase");
                     }
-                } else {
+                }
+                else {
                     throw new NoSuchElementException("Such organisation doesn't exist in DataBase");
                 }
             }

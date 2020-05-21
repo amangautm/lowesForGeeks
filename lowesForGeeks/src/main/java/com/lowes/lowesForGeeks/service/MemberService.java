@@ -38,4 +38,6 @@ public interface MemberService {
     ResponseEntity<Member> makeOrganizationAdmin(Member toBeAdmin, Member member);
 
     ResponseEntity<Member> removeOrganizationAdmin(Member toBeNotAdmin, Member member);
+
+    public String message ="Enter correct id of logged in member";
 }

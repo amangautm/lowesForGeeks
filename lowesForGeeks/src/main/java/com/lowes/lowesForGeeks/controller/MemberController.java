@@ -1,5 +1,6 @@
 package com.lowes.lowesForGeeks.controller;
 
+import com.lowes.lowesForGeeks.Constants;
 import com.lowes.lowesForGeeks.model.Member;
 import com.lowes.lowesForGeeks.model.Team;
 import com.lowes.lowesForGeeks.service.MemberService;
@@ -30,35 +31,53 @@ public class MemberController {
     public void setTeamService(TeamService teamService){ this.teamService = teamService; }
 
     @GetMapping("/lowesforgeeks/member")
-    Iterable<Member> read(){
-        return memberService.findAll();
+    Iterable<Member> read(
+            @RequestHeader(name="loggedInMemberId") Integer id){
+        if(memberService.findById(id).isPresent()) {
+            return memberService.findAll();
+        }
+        else{
+            throw new NoSuchElementException(Constants.loggingMember);
+        }
     }
 
     @GetMapping("/lowesforgeeks/member/{id}")
-    Optional<Member> findById(@PathVariable Integer id){
-        if(memberService.findById(id).isPresent()) {
-            return memberService.findById(id);
+    Optional<Member> findById(
+            @RequestHeader(name="loggedInMemberId") Integer loggingId,
+            @PathVariable Integer id){
+        if(memberService.findById(loggingId).isPresent()) {
+            if (memberService.findById(id).isPresent()) {
+                return memberService.findById(id);
+            } else {
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
         }
         else{
-            throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
     @GetMapping("/lowesforgeeks/member/search")
     Iterable<Member> findByName(
+            @RequestHeader(name="loggedInMemberId") Integer id,
             @RequestParam(value = "first", required = false) String firstName,
             @RequestParam(value = "last", required = false) String lastName) {
-        if(firstName!=null&&lastName!=null) {
-            return memberService.findByFirstNameAndLastName(firstName, lastName);
+        if(memberService.findById(id).isPresent()) {
+            if (firstName != null && lastName != null) {
+                return memberService.findByFirstNameAndLastName(firstName, lastName);
+            }
+            else if (firstName != null) {
+                return memberService.findByFirstName(firstName);
+            }
+            else if (lastName != null) {
+                return memberService.findByLastName(lastName);
+            }
+            else {
+                throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+            }
         }
-        else if(firstName!=null) {
-            return memberService.findByFirstName(firstName);
-        }
-        else if(lastName!=null) {
-            return memberService.findByLastName(lastName);
-        }
-        else {
-            throw new NoSuchElementException("Such member doesn't exist in the DataBase");
+        else{
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -73,7 +92,7 @@ public class MemberController {
             return memberService.create(newMember,existingMember, newMemberTeamId, newMemberOrgId);
         }
         else{
-            throw new NoSuchElementException("Enter correct id of logged in member");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -93,7 +112,7 @@ public class MemberController {
             }
         }
         else {
-            throw new NoSuchElementException("Enter correct id of logged in member");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -113,7 +132,7 @@ public class MemberController {
             }
         }
         else {
-            throw new NoSuchElementException("Enter correct id of logged in member");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -133,7 +152,7 @@ public class MemberController {
             }
         }
         else {
-            throw new NoSuchElementException("Enter correct id of logged in member");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -153,7 +172,7 @@ public class MemberController {
             }
         }
         else {
-            throw new NoSuchElementException("Enter correct id of logged in member");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -171,13 +190,16 @@ public class MemberController {
                 Member toBeDeletedMember = memberService.findById(toBeDeletedId).get();
                 if (loggedInMember.isOrganizationAdmin()) {
                     return memberService.delete(toBeDeletedMember);
-                } else if (loggedInMember.isTeamAdmin()) {
+                }
+                else if (loggedInMember.isTeamAdmin()) {
                     if (loggedInMember.getTeamId() == toBeDeletedMember.getTeamId()) {
                         return memberService.delete(toBeDeletedMember);
-                    } else {
+                    }
+                    else {
                         throw new NoSuchElementException("As a Team Admin not have access to delete member from other team");
                     }
-                } else {
+                }
+                else {
                     throw new NoSuchElementException("As a Normal member not have access to delete any member");
                 }
             }
@@ -186,7 +208,7 @@ public class MemberController {
         }
     }
          else{
-             throw new NoSuchElementException("Enter correct member id");
+             throw new NoSuchElementException(Constants.loggingMember);
          }
     }
 
@@ -205,7 +227,7 @@ public class MemberController {
             }
         }
         else{
-            throw new NoSuchElementException("Enter correct member id");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -224,7 +246,7 @@ public class MemberController {
             }
         }
         else{
-            throw new NoSuchElementException("Enter correct member id");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -243,7 +265,7 @@ public class MemberController {
             }
         }
         else{
-            throw new NoSuchElementException("Enter correct member id");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 
@@ -262,7 +284,7 @@ public class MemberController {
             }
         }
         else{
-            throw new NoSuchElementException("Enter correct member id");
+            throw new NoSuchElementException(Constants.loggingMember);
         }
     }
 }

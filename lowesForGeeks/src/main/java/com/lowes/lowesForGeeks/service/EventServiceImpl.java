@@ -152,20 +152,20 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event unwatch(Event event) {
-        if(event.getNumberOfWatchers()!=null) {
-            event.setNumberOfWatchers(event.getNumberOfWatchers() - 1);
-        }
-        return eventRepository.save(event);
-    }
-
-    @Override
     public Event watch(Event event) {
         if(event.getNumberOfWatchers()!=null) {
             event.setNumberOfWatchers(event.getNumberOfWatchers() + 1);
         }
         else {
             event.setNumberOfWatchers(1);
+        }
+        return eventRepository.save(event);
+    }
+
+    @Override
+    public Event unwatch(Event event) {
+        if(event.getNumberOfWatchers()!=null) {
+            event.setNumberOfWatchers(event.getNumberOfWatchers() - 1);
         }
         return eventRepository.save(event);
     }
@@ -184,7 +184,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event unlike(Event event) {
         if(event.getNumberOfLikes()!=null) {
-            event.setNumberOfLikes(event.getNumberOfLikes() - 1);
+            event.setNumberOfUnlikes(event.getNumberOfLikes() + 1);
+        }
+        else {
+            event.setNumberOfUnlikes(1);
         }
         return eventRepository.save(event);
     }

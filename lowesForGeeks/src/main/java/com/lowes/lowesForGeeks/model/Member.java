@@ -26,11 +26,9 @@ public class Member {
     @Column(name = "email")
     private String email;
 
-    @JsonIgnore(value = false)
     @Column(name = "teamAdmin")
     private boolean teamAdmin;
 
-    @JsonIgnore(value = false)
     @Column(name = "organizationAdmin")
     private boolean organizationAdmin;
 

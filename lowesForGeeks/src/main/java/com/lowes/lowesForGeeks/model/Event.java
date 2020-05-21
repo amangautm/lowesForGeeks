@@ -31,9 +31,11 @@ public class Event implements Serializable {
     @NotBlank
     private String location;
 
-    private @NotBlank String startDateTime;
+    @NotBlank
+    private String startDateTime;
 
-    private @NotBlank String endDateTime;
+    @NotBlank
+    private String endDateTime;
 
     @JsonIgnore
     private long startDateInMills;
@@ -51,6 +53,8 @@ public class Event implements Serializable {
     private Integer numberOfWatchers;
 
     private Integer numberOfLikes;
+
+    private Integer numberOfUnlikes;
 
     @ManyToMany
     private List<Member> participants;
@@ -139,19 +143,19 @@ public class Event implements Serializable {
         this.location = location;
     }
 
-    public @NotBlank String getStartDateTime() {
+    public String getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(@NotBlank String startDateTime) {
+    public void setStartDateTime(String startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public @NotBlank String getEndDateTime() {
+    public String getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(@NotBlank String endDateTime) {
+    public void setEndDateTime(String endDateTime) {
         this.endDateTime = endDateTime;
     }
 
@@ -177,6 +181,14 @@ public class Event implements Serializable {
 
     public void setNumberOfLikes(Integer numberOfLikes) {
         this.numberOfLikes = numberOfLikes;
+    }
+
+    public Integer getNumberOfUnlikes() {
+        return numberOfUnlikes;
+    }
+
+    public void setNumberOfUnlikes(Integer numberOfUnlikes) {
+        this.numberOfUnlikes = numberOfUnlikes;
     }
 
     public Integer getNumberOfParticipants() {

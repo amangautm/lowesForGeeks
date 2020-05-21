@@ -1,4 +1,5 @@
 # LowesForGeeks
+![lowes logo](https://user-images.githubusercontent.com/37938543/82596514-09976200-9bc5-11ea-9757-c66324b679c9.png)
 
 An Unified Portal
 
@@ -37,7 +38,7 @@ The languages, frameworks and libraries. used in the project are:
 -- Choose the `SpringBootApplication` file(i.e LowesForGeeksApplication)
 -- Right Click or open it and Run it's main function.
 
-  # Runtime
+# Runtime
 - Once the application starts running, in the CMD or terminal, you would see "Tomcat started on port(s): `your port no.` " in the second  last line.(By default 
    it is hosted on `localhost:8080/ `)
 - But if `Web server failed to start. Port 8080 was already in use` pops up in terminal ,then to change port type `server.port:8084` in 

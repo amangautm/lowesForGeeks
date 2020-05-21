@@ -1,5 +1,5 @@
 # LowesForGeeks
-![lowes logo](https://user-images.githubusercontent.com/37938543/82596514-09976200-9bc5-11ea-9757-c66324b679c9.png)
+![lowes logo](https://user-images.githubusercontent.com/37938543/82596757-7e6a9c00-9bc5-11ea-8127-ae568960b12f.jpg)
 
 An Unified Portal
 

@@ -27,16 +27,16 @@ The languages, frameworks and libraries. used in the project are:
 - Install Java 1.8 or higher.
 - Add java to PATH environment variables.
 - Install a sql database server.
-- Install git
+- Install Git
 
 # Installation
 
 - Click on `Clone or Download` button and copy the `URL`.
 - Open `Git Bash` or `CMD` and type `git clone <URL>`.
--- Install IntelliJ Community Edition
--- Open the loweforgeeks folder as IntelliJ Community Edition Project
--- Choose the `SpringBootApplication` file(i.e LowesForGeeksApplication)
--- Right Click or open it and Run it's main function.
+- Install IntelliJ Community Edition
+- Open the loweforgeeks folder as IntelliJ Community Edition Project
+- Choose the `SpringBootApplication` file(i.e LowesForGeeksApplication)
+- Right Click or open it and Run it's main function.
 
 # Runtime
 - Once the application starts running, in the CMD or terminal, you would see "Tomcat started on port(s): `your port no.` " in the second  last line.(By default 

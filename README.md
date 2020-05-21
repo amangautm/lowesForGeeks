@@ -1,8 +1,9 @@
 # LowesForGeeks
+![lowes logo](https://user-images.githubusercontent.com/37938543/82596757-7e6a9c00-9bc5-11ea-8127-ae568960b12f.jpg)
 
 An Unified Portal
 
-#Description
+# Description
 
 LowesForGeeks is an unified portal which is aimed at our people and our organization itself where they can host events and formation of teams.The basic entities 
 involved are
@@ -26,18 +27,18 @@ The languages, frameworks and libraries. used in the project are:
 - Install Java 1.8 or higher.
 - Add java to PATH environment variables.
 - Install a sql database server.
-- Install git
+- Install Git
 
 # Installation
 
 - Click on `Clone or Download` button and copy the `URL`.
 - Open `Git Bash` or `CMD` and type `git clone <URL>`.
--- Install IntelliJ Community Edition
--- Open the loweforgeeks folder as IntelliJ Community Edition Project
--- Choose the `SpringBootApplication` file(i.e LowesForGeeksApplication)
--- Right Click or open it and Run it's main function.
+- Install IntelliJ Community Edition
+- Open the loweforgeeks folder as IntelliJ Community Edition Project
+- Choose the `SpringBootApplication` file(i.e LowesForGeeksApplication)
+- Right Click or open it and Run it's main function.
 
-  # Runtime
+# Runtime
 - Once the application starts running, in the CMD or terminal, you would see "Tomcat started on port(s): `your port no.` " in the second  last line.(By default 
    it is hosted on `localhost:8080/ `)
 - But if `Web server failed to start. Port 8080 was already in use` pops up in terminal ,then to change port type `server.port:8084` in 

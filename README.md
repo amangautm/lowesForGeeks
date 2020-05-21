@@ -2,7 +2,7 @@
 
 An Unified Portal
 
-#Description
+# Description
 
 LowesForGeeks is an unified portal which is aimed at our people and our organization itself where they can host events and formation of teams.The basic entities 
 involved are

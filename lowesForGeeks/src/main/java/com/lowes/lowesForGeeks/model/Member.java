@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-public class Member {
+public class Member implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -42,6 +42,10 @@ public class Member {
     @ManyToMany
     @JoinColumn(name = "id", referencedColumnName = "eventId")
     private List<Event> events;
+    
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "createdBy")
+    private List<Event> creator;
 
     public int getId() {
         return id;

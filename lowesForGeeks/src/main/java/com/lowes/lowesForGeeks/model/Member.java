@@ -40,6 +40,7 @@ public class Member {
 
     @JsonIgnore
     @ManyToMany
+    @JoinColumn(name = "id", referencedColumnName = "eventId")
     private List<Event> events;
 
     public int getId() {

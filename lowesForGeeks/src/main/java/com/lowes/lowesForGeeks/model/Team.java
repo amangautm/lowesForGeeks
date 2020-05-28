@@ -20,7 +20,7 @@ public class Team {
     private String teamName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "teamId", referencedColumnName = "id")
+    @JoinColumn(name = "teamId", referencedColumnName = "teamId")
     private List<Member> memberList;
 
     @Autowired

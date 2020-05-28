@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Member implements Serializable{
+public class Member implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)

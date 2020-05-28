@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 public class Event implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer eventId;

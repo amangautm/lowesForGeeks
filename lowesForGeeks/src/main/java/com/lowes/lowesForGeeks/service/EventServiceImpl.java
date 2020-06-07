@@ -3,6 +3,7 @@ package com.lowes.lowesForGeeks.service;
 import com.lowes.lowesForGeeks.model.Event;
 import com.lowes.lowesForGeeks.model.EventType;
 import com.lowes.lowesForGeeks.model.Member;
+import com.lowes.lowesForGeeks.model.Team;
 import com.lowes.lowesForGeeks.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> findAll(Member member) {
-        Iterable<Event> eventList = eventRepository.findAll(member.getTeamId());
+        List<Event> eventList = eventRepository.findAll(member.getTeamId());
         for( Event event : eventList) {
             if(event.getNumberOfViews()!=null) {
                 event.setNumberOfViews(event.getNumberOfViews() + 1);
@@ -40,13 +41,7 @@ public class EventServiceImpl implements EventService {
             }
             eventRepository.save(event);
         }
-        return getIteratorList(eventList);
-    }
-
-    private static List<Event> getIteratorList(Iterable<Event> iterator){
-        List<Event> list = new ArrayList<>();
-        iterator.forEach(list::add);
-        return list;
+        return eventList;
     }
 
     @Override
@@ -64,36 +59,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> viewUpcomingEvents(Member member) {
+    public List<Event> viewUpcomingEvents() {
         long today = Calendar.getInstance().getTimeInMillis();
-        if (member.isOrganizationAdmin()) {
-            return getIteratorList(eventRepository.findUpcomingEvents(EventType.Private, today));
-        }
-        else {
-            return getIteratorList(eventRepository.findUpcomingEvents(member.getTeamId(), EventType.Private, today));
-        }
+            return eventRepository.queryByUpcomingEvents(today);
     }
 
     @Override
-    public List<Event> viewTrendingEvents(Member member) {
+    public List<Event> viewTrendingEvents() {
         long today = Calendar.getInstance().getTimeInMillis();
-        if(member.isOrganizationAdmin()) {
-            return getIteratorList(eventRepository.findTrendingEvents(EventType.Private, today));
-        }
-        else {
-            return getIteratorList(eventRepository.findTrendingEvents(member.getTeamId(), EventType.Private, today));
-        }
+            return eventRepository.queryByTrendingEvents(EventType.Private, today);
     }
 
     @Override
-    public List<Event> viewPopularEvents(Member member) {
+    public List<Event> viewPopularEvents() {
         long today = Calendar.getInstance().getTimeInMillis();
-        if(member.isOrganizationAdmin()) {
-            return getIteratorList(eventRepository.findPopularEvents(EventType.Private, today));
-        }
-        else {
-            return getIteratorList(eventRepository.findPopularEvents(member.getTeamId(), EventType.Private, today));
-        }
+            return eventRepository.queryByPopularEvents(EventType.Private, today);
     }
 
     @Override

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,6 +39,23 @@ public class Event implements Serializable {
     @NotBlank
     private String endDateTime;
 
+    private Integer numberOfViews;
+
+    private Integer numberOfWatchers;
+
+    private Integer numberOfLikes;
+
+    private Integer numberOfUnlikes;
+
+    @ManyToMany
+    private List<Member> participants =new ArrayList<>();
+
+    Integer numberOfParticipants;
+
+    boolean recurring;
+
+    RecurringFrequency recurFrequency;
+
     @JsonIgnore
     private long startDateInMills;
 
@@ -48,28 +66,6 @@ public class Event implements Serializable {
 
     @JsonIgnore
     private long creationTime;
-
-    private Integer numberOfViews;
-
-    private Integer numberOfWatchers;
-
-    private Integer numberOfLikes;
-
-    private Integer numberOfUnlikes;
-
-    @ManyToMany
-    private List<Member> participants;
-
-
-    Integer numberOfParticipants;
-
-    boolean recurring;
-
-    RecurringFrequency recurFrequency;
-
-    public List<Member> getParticipants() {
-        return participants;
-    }
 
     public long getStartDateInMills() {
         return startDateInMills;
@@ -122,7 +118,6 @@ public class Event implements Serializable {
     public String getName() {
         return name;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -199,6 +194,15 @@ public class Event implements Serializable {
     public void setNumberOfParticipants(Integer numberOfParticipants) {
         this.numberOfParticipants = numberOfParticipants;
     }
+
+    public List<Member> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<Member> participants) {
+        this.participants = participants;
+    }
+
 
     public boolean isRecurring() {
         return recurring;

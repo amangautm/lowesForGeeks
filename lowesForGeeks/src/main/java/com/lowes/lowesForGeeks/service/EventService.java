@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventService {
-    Optional<Event> findById(Integer id, Member member);
+    Optional<Event> findById(Integer eventId, Member member);
 
     List<Event> findAll(Member member);
 
-    List<Event> viewUpcomingEvents(Member member);
+    List<Event> viewUpcomingEvents();
 
-    List<Event> viewTrendingEvents(Member member);
+    List<Event> viewTrendingEvents();
 
-    List<Event> viewPopularEvents(Member member);
+    List<Event> viewPopularEvents();
 
     ResponseEntity create(Event event, Member member);
 

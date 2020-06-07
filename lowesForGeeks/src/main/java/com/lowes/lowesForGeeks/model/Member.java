@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,11 +43,11 @@ public class Member implements Serializable {
     @JsonIgnore
     @ManyToMany
     @JoinColumn(name = "id", referencedColumnName = "eventId")
-    private List<Event> events;
+    private List<Event> events =new ArrayList<>();
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "createdBy")
-    private List<Event> creator;
+    private List<Event> creator =new ArrayList<>();
 
     public int getId() {
         return id;

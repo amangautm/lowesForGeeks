@@ -73,7 +73,7 @@ public class EventController {
             @RequestHeader(name = "loggedInMemberId") Integer id) {
         if(memberService.findById(id).isPresent()) {
             Member loggedInMember = memberService.findById(id).get();
-            List<Event> eventList = eventService.viewTrendingEvents(loggedInMember);
+            List<Event> eventList = eventService.viewTrendingEvents();
             if (eventList.size() > 0) {
                 return new ResponseEntity(eventList, HttpStatus.OK);
             }
@@ -91,7 +91,7 @@ public class EventController {
             @RequestHeader(name = "loggedInMemberId") Integer id){
         if(memberService.findById(id).isPresent()) {
             Member loggedInMember = memberService.findById(id).get();
-            List<Event> eventList =  eventService.viewPopularEvents(loggedInMember);
+            List<Event> eventList =  eventService.viewPopularEvents();
             if(eventList.size()>0) {
                   return new ResponseEntity(eventList, HttpStatus.OK);
             }
@@ -109,7 +109,7 @@ public class EventController {
             @RequestHeader(name = "loggedInMemberId") Integer id){
         if(memberService.findById(id).isPresent()) {
             Member loggedInMember = memberService.findById(id).get();
-            List<Event> eventList = eventService.viewUpcomingEvents(loggedInMember);
+            List<Event> eventList = eventService.viewUpcomingEvents();
             if (eventList.size() > 0) {
                 return new ResponseEntity(eventList, HttpStatus.OK);
             }
@@ -141,10 +141,11 @@ public class EventController {
             @PathVariable Integer eventId){
         if(memberService.findById(id).isPresent()) {
             Member loggedInMember = memberService.findById(id).get();
-            Optional<Event> event = eventService.findById(eventId,loggedInMember);
-            if (event.isPresent()) {
-                return new ResponseEntity(eventService.watch(event.get()), HttpStatus.OK);
-            } else {
+            if (eventService.findById(eventId,loggedInMember).isPresent()) {
+                Event event = eventService.findById(eventId, loggedInMember).get();
+                return new ResponseEntity(eventService.watch(event), HttpStatus.OK);
+            }
+            else {
                 throw new ValidationException("Event not found");
             }
         }
@@ -159,10 +160,11 @@ public class EventController {
             @PathVariable Integer eventId){
         if(memberService.findById(id).isPresent()) {
             Member loggedInMember = memberService.findById(id).get();
-            Optional<Event> event = eventService.findById(eventId, loggedInMember);
-            if (event.isPresent()) {
-                return new ResponseEntity(eventService.unwatch(event.get()), HttpStatus.OK);
-            } else {
+            if (eventService.findById(eventId,loggedInMember).isPresent()) {
+                Event event = eventService.findById(eventId, loggedInMember).get();
+                return new ResponseEntity(eventService.unwatch(event), HttpStatus.OK);
+            }
+            else {
                 throw new ValidationException("Event not found");
             }
         }

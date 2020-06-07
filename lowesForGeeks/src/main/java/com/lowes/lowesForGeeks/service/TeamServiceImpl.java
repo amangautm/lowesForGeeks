@@ -23,6 +23,22 @@ public class TeamServiceImpl implements TeamService{
 
     private String mssg ="Only Organization and Team Admin is authorized to do so.";
 
+
+    @Override
+    public Iterable<Team> findAll() {
+        return teamRepository.findAll();
+    }
+
+    @Override
+    public Optional<Team> findByTeamId(Integer id) {
+        return teamRepository.findByTeamId(id);
+    }
+
+    @Override
+    public Iterable<Team> findByTeamName(String teamName) {
+        return teamRepository.findByTeamName(teamName);
+    }
+
     @Override
     public ResponseEntity create(Team team, Member member, Member creator) {
         if(!creator.isOrganizationAdmin()) {
@@ -106,21 +122,6 @@ public class TeamServiceImpl implements TeamService{
         else{
             throw new ValidationException(mssg);
         }
-    }
-
-    @Override
-    public Iterable<Team> findAll() {
-        return teamRepository.findAll();
-    }
-
-    @Override
-    public Optional<Team> findByTeamId(Integer id) {
-        return teamRepository.findByTeamId(id);
-    }
-
-    @Override
-    public Iterable<Team> findByTeamName(String teamName) {
-        return teamRepository.findByTeamName(teamName);
     }
 
     @Override
